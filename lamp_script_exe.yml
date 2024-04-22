@@ -1,0 +1,26 @@
+---
+- name: Install and execute script on web_server
+  hosts: web_servers
+  become: yes
+  
+  tasks:
+    - name: Upload the script
+      copy:
+        src: /home/vagrant/ansible/deploy_lamp.sh
+        dest: /usr/local/bin/deploy_lamp.sh
+        mode: '0755'
+
+    - name: Execute the script
+      command: sh /usr/local/bin/deploy_lamp.sh
+
+    - name: Create cron job to check server uptime every 12 am
+      cron:
+        name: "Check uptime at daily at midnight"
+        job: "uptime > /var/log/uptime_record"
+        minute: "0"
+        hour: "0"
+        day: "*"
+        month: "*"
+        weekday: "*"
+
+
